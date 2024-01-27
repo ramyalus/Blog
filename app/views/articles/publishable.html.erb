@@ -1,0 +1,221 @@
+<!-- <table border = "3">
+	<thead>
+	  <tr>
+		<th>Sl.No</th>
+		<th>Title</th>
+		<th>Created By </th>
+		<th>Category</th>
+		<th colspan="1">Actions</th>
+	  </tr>
+	</thead>
+	<div id = "publishable_articles">
+		
+	</div>
+	<tbody>
+		<%# if @articles.present? %>
+			<%# @articles.each_with_index do |article, index| %>
+				<tr id=<%#= "article_#{article.id}" %>>
+					<td><%#= index +1 %></td>
+					<td><%#= link_to article.title, article_path(article) %></td>
+					<td><%#= article.user.name %></td>
+					<td><%#= article.category.title %></td>
+					<%# if current_user.id == article.user_id %>
+					    <td><%#= link_to "Edit", edit_category_path(article)%></td>
+						<td><button onclick="publishArticle('<%#=article.id%>')">Publish</button></td>
+					<%# end %>
+			  </tr>
+			<%# end %>
+		<%# else %>
+			<tr>
+				<td colspan="5"><b> No articles got approved to get publish...... </b></td>
+			</tr>
+		<%# end %>
+	</tbody>
+</table>
+
+<script type="text/javascript">
+	function publishArticle(id) {
+		var xhr = new XMLHttpRequest();
+		var input = {id};
+		var body = JSON.stringify(input)
+		var url = `http://localhost:3000/articles/${id}/publish`
+		xhr.open('PUT', url, true);
+		xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.onreadystatechange = function() {
+        	if(xhr.readyState == 4 && xhr.status == 200) {
+        		var response = JSON.parse(xhr.responseText);
+        		var publishable_articles = document.getElementById('publishable_articles');
+        		publishable_articles.innerHTML = response.message;
+        		document.getElementById(`article_${id}`).remove();
+        	}
+        }
+		xhr.send(body);
+	}
+	
+</script> -->
+<div>
+	<%= form_tag url_for(action: :publishable), method: :get, id: "search_publishable_articles" do %>
+		<div>
+			<span id = "search_error"></span> 
+		</div>
+		<div>
+			<b> <%= label_tag "Search:" %> </b> &nbsp;
+			<%= text_field_tag "search", nil, placeholder: "search by title" %> &nbsp;
+			<%= submit_tag "search" %>
+		</div>
+	<% end %>
+</div>
+<div id = "publish_button">
+	<button onclick="publishArticle()">publish</button>
+</div>
+
+
+<table border ="3">
+	<thead>
+		<tr>
+			<th> # </th>
+			<th> Sl.No </th>
+			<th> Title </th>
+			<th> Created By </th>
+			<th> Category </th> 
+			<!-- <th> Action </th> -->
+		<tr>
+	</thead>
+	<tbody id = "publishable_articles">
+		<% if @articles.present? %>
+			<% @articles.each_with_index do |article, index| %>
+				<tr>
+					<td> <input type="checkbox" class="publish" value= <%= article.id %> /></td>
+					<td> <%= index + 1 %> </td>
+					<td> <%= article.title %> </td>
+					<td> <%= article.user.name %> </td>
+			     	<td> <%= article.category.title %> </td>	
+				</tr>
+			<% end %>	
+		<% end %>
+	</tbody>
+</table>
+<style>
+	table {
+    border-collapse: separate;
+    text-indent: initial;
+    border-spacing: 2px;
+    width: 100%;
+}
+
+#publish_button {
+	margin: 10px;
+	margin-left: 0px;
+}
+</style>
+
+<script type="text/javascript">
+	function publishArticle(e){
+    let publishArticles = document.querySelectorAll('.publish');
+    var checkedArticles = [];
+    publishArticles.forEach(article => {
+    	if(article.checked){
+    		checkedArticles.push(article.value);
+    	}
+    })
+    articleBulkPublish(checkedArticles);
+	}
+
+	function articleBulkPublish(publish_ids){
+		console.log(publish_ids);
+		var xhr = new XMLHttpRequest;
+		var input = {publish_ids};
+		var body = JSON.stringify(input);
+		var url = "http://localhost:3000/articles/bulk_publish_article"
+		xhr.open('PUT', url, true);
+		xhr.setRequestHeader('Content-Type', 'application/json')
+		xhr.onreadystatechange = function() {
+			if(xhr.readyState == 4 && xhr.status == 200) {
+				// var response = JSON.parse(xhr.responseText);
+				// var publishable_articles = document.getElementById('publishable_articles');
+				location.reload()
+			}
+		}
+
+		xhr.send(body);
+
+	}
+
+	var searchableArticlesHandle = document.getElementById('search_publishable_articles');
+	searchableArticlesHandle.addEventListener("submit", function(e){
+		e.preventDefault();
+
+		const formData = new FormData(e.target);
+		const formProps = Object.fromEntries(formData);
+		const searchValue = formProps["search"];
+		var publishableArticlesHandle = document.getElementById('publishable_articles');
+		if(searchValue != ""){
+			var xhr = new XMLHttpRequest;
+			var url = `http://localhost:3000/articles/to_publish?search=${searchValue}`
+			xhr.open('get', url, true);
+			xhr.setRequestHeader('Content-Type', 'application/json');
+			xhr.onreadystatechange =  function(){
+				if(xhr.readyState == 4 && xhr.status == 200){
+					var response = JSON.parse(xhr.responseText);
+					var articles = response["articles"];
+					buildArticlesHtml(articles, publishableArticlesHandle);
+				}
+			}
+			xhr.send();
+		}
+		else {
+			var searchErrorHandle = document.getElementById('search_error');
+			searchErrorHandle.innerHTML = "Please enter the search text";
+			searchErrorHandle.setAttribute("style", "color: red;");
+		}	
+	})
+
+
+	function buildArticlesHtml(articles, handle){
+		handle.innerHTML = "";
+		articles.forEach((article, i) => {
+     	var tr = document.createElement('tr');
+
+     	var td1 = document.createElement('td');
+     	var input = document.createElement('input');
+     	var type = document.createAttribute('type');
+     	var klass = document.createAttribute('class');
+     	var value = document.createAttribute('value');
+     	type.value = "checkbox";
+     	klass.value = "publish";
+     	value.value = article.id;
+
+     	input.setAttributeNode(type);
+     	input.setAttributeNode(klass);
+     	input.setAttributeNode(value);
+    
+     	td1.appendChild(input);
+     	tr.appendChild(td1);
+
+     	var td2 = document.createElement('td');
+     	var text2 = document.createTextNode(i + 1);
+     	td2.appendChild(text2);
+     	tr.appendChild(td2);
+
+     	var td3 = document.createElement('td');
+     	var text3 = document.createTextNode(article.title);
+     	td3.appendChild(text3);
+     	tr.appendChild(td3);
+
+     	var td4 = document.createElement('td');
+     	var text4 = document.createTextNode("username");
+     	td4.appendChild(text4);
+     	tr.appendChild(td4);
+
+     	var td5 = document.createElement('td');
+     	var text5 = document.createTextNode("category");
+     	td5.appendChild(text5);
+     	tr.appendChild(td5);
+      
+      
+      handle.appendChild(tr);
+		})
+	}
+</script>
+
+<%= will_paginate @articles %>

@@ -1,0 +1,32 @@
+<h1> <%= @category.title %> </h1>
+<p> <%= @category.description %> </p>
+
+<h1> List of Articles </h1>
+
+<% if @articles.present? %>
+	<table border = "3">
+		<thead>
+		  <tr>
+			<th>Sl.No</th>
+			<th>Title</th>
+			<th>Created By </th>
+			<th>Category</th>
+		  </tr>
+		</thead>
+
+		<tbody>
+			<% @articles.each_with_index do |article, index| %>
+				<tr>
+					<td><%= index +1 %></td>
+					<td><%= link_to article.title, article_path(article) %></td>
+					<td><%= article.user.name %></td>
+					<td><%= article.category.title %></td>
+			  </tr>
+			<% end %>
+		</tbody>
+	</table>
+<% else %>
+	<h2> No data to display  </h2>
+<% end %>
+
+<%= will_paginate @articles %>

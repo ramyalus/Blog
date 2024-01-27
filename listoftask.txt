@@ -1,0 +1,33 @@
+1. solve n+1 query problem.
+problem definition ===> lets consider for one category there are 100(n) articles when you execute a query @category.articles it will execute 100+1(n+1) queries.
+@categories = Category.all
+@categories.each do |c|
+  puts(c.title)
+  c.articles.each do |a|
+    puts "Article name : #{a.title}"
+  end
+end
+
+solution ===>
+ step 1:  
+	  @categories = Category.includes(:articles).all
+
+2. solve unauthenticated user to see articles. (completed -- changes done in controller files before_action call back)
+3. allow extra params in devise. (completed --- changes done in file views/devise/registrations/new.html.erb)
+4. send mail to user after approving the article. (pending) ==> not possible due mail setup issues
+5. send mail to approver once the article is created.  (pending) ==> not possible due mail setup issues
+6. Article to be published after getting approved. -> completed
+7. Github search project. ----> seperate project(later)
+8. search category and article. ---- completed
+  8.1 search article using ajax
+9. send emails via jobs ==> not possible due mail setup issues
+10. paginate without using gems (customize pagination)
+11. approve and publish multiple articles.
+12. ajax call using jquery and also in ruby on rails
+13. when params[:page] not present
+14. filter and export with category.
+
+concepts to learn:
+1.  CSRF token authenticity.
+2. skip_before_action :verify_authenticity_token, :only => [:create]
+3. ajax

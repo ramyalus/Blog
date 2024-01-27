@@ -1,0 +1,7 @@
+<b>Title : </b> <%= @article.title %><br/>
+	<% if @article.image_url.present? %>
+		<%= image_tag  @article.image_url.url, size: "160x100", alt: "No image" %>
+	<% end %>
+<b>Content : </b> <%= @article.content %><br/>
+<b>Created_by : </b> <%= @article.user.name %><br/>
+<b>Category : </b> <%= @article.category.title %><br/>

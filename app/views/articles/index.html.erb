@@ -1,0 +1,229 @@
+
+<%= link_to "Add Article", new_article_path %><br/><br/>
+
+
+
+<!--  approve single article using ajax 
+
+
+<table border = "3">
+	<thead>
+	  <tr>
+		<th>Sl.No</th>
+		<th>Title</th>
+		<th>Created By </th>
+		<th>Category</th>
+		<th colspan="3">Actions</th>
+	  </tr>
+	</thead>
+	<div id = "approveable_articles">
+		
+	</div>
+	<tbody>
+		<%# @articles.each_with_index do |article, index| %>
+			<tr id=<%#= "article_#{article.id}" %>>
+				<td><%#= index +1 %></td>
+				<td><%#= link_to article.title, article_path(article) %></td>
+				<td><%#= article.user.name %></td>
+				<td><%#= article.category.title %></td>
+				<%# if current_user.is_admin %>
+					<td><button onclick="approveArticle('<%#=article.id%>')">Approve</button></td>   
+				<%# end %>
+				<%# if current_user.id == article.user_id %>
+					<td><%#= button_to "Destroy", article_path(article), method: :delete, data: { confirm: "Are you sure?" } %></td>
+				    <td><%#= link_to "Edit", edit_article_path(article)%></td>
+				<%# end %>
+		  </tr>
+		<%# end %>
+	</tbody>
+</table>
+
+<script type="text/javascript">
+	function approveArticle(id) {
+		var xhr = new XMLHttpRequest();
+		// var url = `http://localhost:3000/articles/approve/${id}`
+		var input = {id};
+		var body = JSON.stringify(input)
+		var url = `http://localhost:3000/articles/${id}/approve`
+		xhr.open('PUT', url, true);
+		xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.onreadystatechange = function() {
+        	if(xhr.readyState == 4 && xhr.status == 200) {
+        		var response = JSON.parse(xhr.responseText);
+        		var approveable_articles = document.getElementById('approveable_articles');
+        		approveable_articles.innerHTML = response.message;  //innerHtML is a HTML element property. 
+        		document.getElementById(`article_${id}`).remove();   // "#{}"==> ruby string interpolation `${}`==> js string interpolation
+        	}
+        }
+        console.log(body);
+        console.log(input);
+		xhr.send(body);
+	}
+	
+</script>
+ -->
+
+<div id = 'approveable_articles'>
+</div>
+<div>
+	<div>
+		<%= form_tag url_for(action: "index"), method: "get", id: "search_article" do  %>
+			<b> <%= label_tag "Search:" %> </b> &nbsp;
+			<%= text_field_tag "search", nil, placeholder: "search by title" %> &nbsp;
+			<%= submit_tag "Search" %> 
+		<% end %> 
+	</div>
+	<span id = "article_count">
+		<b>Total Number of Articles:</b> <%= @articles.length %>
+	</span>
+	<div id  = "approve_button">
+		<% if current_user.is_admin %>
+			<button onclick="approveArticle()">Approve</button>
+		<% end %>
+	</div>
+</div>
+
+<table border = "3">
+	<thead>
+		<tr>
+		<th>SL No.</th>
+		<th>Title </th> 
+		<th>Created By </th>
+		<th>Category </th>
+		<% if current_user.is_admin %>
+			<th>Approve </th>
+		<% end %> 
+		<th colspan="2"> Actions </th>
+	</tr>
+
+	</thead>
+	<tbody id = "article_list">
+		<%if @articles.present? %>
+			<% @articles.each_with_index do |article, index| %>
+				<tr id = <%= "article_#{article.id}" %>>
+					<td> <%= index + 1 %> </td> 
+					<td> <%= link_to article.title, article_path(article.id) %> </td>
+					<td> <%= article.user.name %></td>
+					<td> <%= article.category.title %> </td>
+	                <% if current_user.is_admin %>
+	                	<td> <input type='checkbox' class='articles' value= <%= article.id %> /> </td>
+	                <% end %>
+	                <% if current_user.id == article.user.id %>
+	                	<td><%= button_to "Destroy", article_path(article), method: :delete, data: { confirm: "Are you sure?" } %>
+	                	</td>
+					    <td><%#= link_to "Edit", edit_article_path(article)%>
+					    	<a href= <%= "/articles/#{article.id}/edit" %> >Edit</a>
+					    </td>
+					<% else %>
+						<td><%= button_to "Destroy", article_path(article), method: :delete, data: { confirm: "Are you sure?" }, disabled: true %>
+						</td>
+					    <td><%#= link_to "Edit", edit_article_path(article), disabled: true%>
+					    	<a href= <%= "/articles/#{article.id}/edit" %> style="pointer-events: none">Edit</a>
+					    </td>
+	                <% end %>
+	                
+				</tr>
+			<% end %>
+		<% else %> 
+      <tr>
+				<td colspan="6" style="text-align: center;"> <b> No data found!!!! </b> </td>
+			</tr>
+		<% end %>
+	</tbody>
+</table>
+
+<style>
+	table {
+    border-collapse: separate;
+    text-indent: initial;
+    border-spacing: 2px;
+    width: 100%;
+}
+
+#approve_button {
+	margin: 10px;
+	margin-left: 0px;
+}
+</style>
+
+<script type="text/javascript">
+	function approveArticle(e) {
+		let allArticles = document.querySelectorAll('.articles')
+		let selectedArticles = []
+		allArticles.forEach(article => {
+			if(article.checked){
+				selectedArticles.push(article.value)
+			}
+		})
+		console.log("article", selectedArticles)
+
+	    articleBulkApprove(selectedArticles);
+	}
+
+	function articleBulkApprove(article_ids){
+		var xhr = new XMLHttpRequest;
+		var input = {article_ids};
+    var body = JSON.stringify(input);
+    var url = "http://localhost:3000/articles/bulk_approve_article"
+    xhr.open('PUT', url, true);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.onreadystatechange = function(){
+    	if(xhr.readyState == 4 && xhr.status == 200) {
+    		var response = JSON.parse(xhr.responseText);
+    		var approveable_articles = document.getElementById('approveable_articles');
+            // article_ids.forEach(article_id => {
+            //   document.getElementById(`article_${article_id}`).remove();
+            // })
+            location.reload();
+    		// approveable_articles.innerHTML = response.message
+    	}
+    }
+    xhr.send(body);
+	}
+
+	var searchHandle = document.getElementById('search');
+	
+	searchHandle.addEventListener('keyup', function(){
+		searchArticles();
+	});
+
+	searchHandle.addEventListener('keydown', function(){
+		searchArticles();
+	});
+
+	function searchArticles(){
+		var search = searchHandle.value;
+		console.log(search);
+		var articleCountHandle = document.getElementById('article_count');
+		var articleListHandle = document.getElementById('article_list');
+		if(search.length > 0){
+			var xhr = new XMLHttpRequest;
+			var input = {search};
+			var body = JSON.stringify(input);
+			var url = `http://localhost:3000/articles/ajax_search?search=${search}`
+			xhr.open('GET', url, true);
+			xhr.setRequestHeader('Content-Type', 'application/json');
+			xhr.onreadystatechange = function(){
+				if(xhr.readyState == 4 && xhr.status == 200){
+					var response = JSON.parse(xhr.responseText);
+					articleCountHandle.innerHTML = `Total Number of Articles:- ${response["articles"].length}`;
+          /*
+          var articleList = [];
+					response["articles"].forEach((article, i) => {
+						console.log(article);
+						articleList.push(`<tr><td> ${i + 1}</td><td> ${article["title"]}</td><td> ${article["user_name"]} </td><td>${article["category_title"]}</td></tr>`)
+					})
+					*/
+					
+					var articleList = response["articles"].map((article, i) => {
+						return `<tr><td> ${i + 1}</td><td> ${article["title"]}</td><td> ${article["user_name"]} </td><td>${article["category_title"]}</td><td><form class="button_to" method="post" action="/articles/${article["id"]}"><input type="hidden" name="_method" value="delete" autocomplete="off"><input data-confirm="Are you sure?" type="submit" value="Destroy"><input type="hidden" name="authenticity_token" value="<%= form_authenticity_token%>" autocomplete="off"></form></td><td><a href="/articles/${article["id"]}/edit">Edit</a></td></tr>`
+					})
+					articleListHandle.innerHTML = articleList.join('\n');
+				}
+			}
+			xhr.send(body);
+		}
+	}
+</script>
+
+<%= will_paginate @articles %>

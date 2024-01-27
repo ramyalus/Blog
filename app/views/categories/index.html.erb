@@ -1,0 +1,38 @@
+
+<%= link_to "Add category", new_category_path %>
+<br/>
+<h1> List of categories - <%= @categories.length %> </h1> 
+<%= form_tag '/categories', method: :get do %>
+	<%= label_tag :Search %>: 
+	<%= text_field_tag :search %>
+	<%= submit_tag :search %>
+<% end %>
+<br/>
+<table border="3">
+	<thead>
+	<tr>
+		<th> Sl.No </th>
+		<th>Title</th>
+		<th>Description</th>
+		<th>No of Articles</th>
+		<th colspan="2">Actions</th>
+	</tr>
+	</thead>
+	<tbody>
+		<% @categories.each_with_index do |category, index| %>
+			<tr>
+                <td><%= index+1 %></td>
+				<td><%= link_to category.title, category_path(category) %></td>
+				<td><%= category.description %></td>
+				<td><%= category.articles.length %></td>
+				<td><%= link_to "Edit", edit_category_path(category)%></td>
+				<td><%= button_to "Destroy", category_path(category), method: :delete, data: { confirm: "Are you sure?" } %></td>
+			</tr>
+		<% end %>
+	</tbody>
+</table><br/>
+
+<%= link_to "Back", :back %>
+
+<%= will_paginate @categories %>
+

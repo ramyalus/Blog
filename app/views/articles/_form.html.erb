@@ -1,0 +1,98 @@
+<%= form_for @article do |f| %>
+	<%= f.label :Title %> : <%= f.text_field :title %> <span id ="title_error"></span> <br/><br/>
+	<%= f.label :Content %> : <%= f.text_area :content %> <span id = "content_error"></span> <br/><br/>
+	<%= f.label :Image %> : <%= f.file_field :image_url %> <span id = "image_error"></span> <br/><br/>
+	<%= f.label :Category %> :  <%= f.collection_select(:category_id, Category.all, :id, :title, prompt: true)%>
+	 <span id = "category_error"></span> <br/><br/>
+	<!-- <select id = "select_category"></select> -->
+	<%#= f.hidden_field :authenticity_token, value: "ysgadyg" %>
+	<%= f.submit button_action %>
+
+<% end %>
+
+<script type="text/javascript">
+	/*  select categories using ajax call.
+		document.addEventListener("DOMContentLoaded", () => {
+		var xhr = new XMLHttpRequest();
+		var url = "http://localhost:3000/categories"
+		xhr.open('GET', url, true);
+		xhr.setRequestHeader('Content-Type', 'application/json');
+		xhr.onreadystatechange = function() {
+		 if(xhr.readyState == 4 && xhr.status == 200) {
+		 	var response = JSON.parse(xhr.responseText);
+		 	categories = response.categories;
+		 	var options = [];
+		 	for(var i=0 ; i<categories.length; i++) {
+              var option_tag = `<option value=${categories[i].id}> ${categories[i].title}</option>`
+              options.push(option_tag);
+		 	}
+		 	var select_tag = `<select name="category_id" id="categories">${options}</select>`;
+		 	var categoriesHandle = document.getElementById('select_category');
+		 	categoriesHandle.innerHTML = select_tag;
+		 }
+		}
+		xhr.send();
+	});
+
+	// fields validation.
+    var articleTitleHandle = document.getElementById('article_title');
+    articleTitleHandle.addEventListener('blur', function(){
+    	if(articleTitleHandle.value == ""){
+    		var titleErrorHandle = document.getElementById('title_error');
+    		titleErrorHandle.innerHTML = "Please enter title";
+    	}
+    });
+
+    var articleContentHandle = document.getElementById('article_content');
+    articleContentHandle.addEventListener('blur', function(){
+    	if(articleContentHandle.value == ""){
+    		var contentErrorHandle = document.getElementById('content_error');
+    		contentErrorHandle.innerHTML = "Please add content";
+    	}
+    });
+
+    var articleImageHandle = document.getElementById('article_image_url');
+    articleImageHandle.addEventListener('blur', function(){
+    	if(articleImageHandle.value == ""){
+    		var imageErrorHandle = document.getElementById('image_error');
+    		imageErrorHandle.innerHTML = "Please upload image";
+    	}
+    });
+
+    var articleCategoryHandle = document.getElementById('article_category_id');
+    articleCategoryHandle.addEventListener('blur', function(){
+    	if(articleCategoryHandle.value == ""){
+    		var categoryErrorHandle = document.getElementById('category_error');
+    		categoryErrorHandle.innerHTML = "Please select category";
+    	}
+    });
+    */
+
+    var newArticleHandle = document.getElementById('new_article');
+    newArticleHandle.addEventListener('submit', function(e){
+    	e.preventDefault(); //preventDefault will prevent from form submission.
+    	const formData = new FormData(e.target);
+			const formProps = Object.fromEntries(formData);
+			if(formProps["article[title]"] == ''){
+				var titleErrorHandle = document.getElementById('title_error');
+	    	titleErrorHandle.innerHTML = "Please enter title";
+			}
+
+			if(formProps["article[content]"] == ''){
+				var contentErrorHandle = document.getElementById('content_error');
+	    	contentErrorHandle.innerHTML = "Please add content";
+			}
+    
+    	if(formProps["article[category_id]"] == ''){
+    		var categoryErrorHandle = document.getElementById('category_error');
+    		categoryErrorHandle.innerHTML = "Please select category";
+    	}
+
+    });
+</script>
+
+<style type="text/css">
+	span {
+		color: red;
+	}
+</style>

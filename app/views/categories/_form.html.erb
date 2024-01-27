@@ -1,0 +1,16 @@
+<div>
+	<%= form_for @category do |f| %>
+	 <% if @category.errors.present? %>
+	  <h2> <%= pluralize(@category.errors.count, 'error')%> prohibited creation of category </h2> 
+	 <% end %>
+     <ul>
+	   <% @category.errors.full_messages.each do |e| %>
+	   	<li><%= e %></li>
+	   <% end %>
+	  </ul>
+	   <br/><br/>
+	   <b><%= f.label :Title %>:</b> <%= f.text_field :title %><br/><br/>
+	   <b><%= f.label :Description %>:</b> <%= f.text_area :description %><br/><br/>
+	    <%= f.submit :save %>
+	<% end %>
+</div>
