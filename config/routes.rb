@@ -1,7 +1,6 @@
 Rails.application.routes.draw do
-
-
-  
+  require 'resque/server'
+  mount Resque::Server, at: '/jobs'
   devise_for :users
 	root to: "articles#index"
 
@@ -25,8 +24,7 @@ Rails.application.routes.draw do
     	get 'to_publish' => 'articles#publishable'
       put 'bulk_approve_article' => 'articles#bulk_approve_article'
       put 'bulk_publish_article' => 'articles#bulk_publish_article'
+      match 'export_csv' => 'articles#export', :as => 'export_csv', :via => [:get, :post]
     end
 	end
-
-  # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
 end

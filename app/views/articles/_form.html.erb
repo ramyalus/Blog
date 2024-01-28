@@ -70,7 +70,7 @@
 
     var newArticleHandle = document.getElementById('new_article');
     newArticleHandle.addEventListener('submit', function(e){
-    	e.preventDefault(); //preventDefault will prevent from form submission.
+    	// e.preventDefault(); //preventDefault will prevent from form submission.
     	const formData = new FormData(e.target);
 			const formProps = Object.fromEntries(formData);
 			if(formProps["article[title]"] == ''){

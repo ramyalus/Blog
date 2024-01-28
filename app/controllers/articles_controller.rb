@@ -2,7 +2,7 @@ class ArticlesController < ApplicationController
 	before_action :find_article, only: [:show, :edit, :update, :destroy, :approve_article, :publish]
   before_action :set_current_user
   before_action :authenticate_user!
-  skip_before_action :verify_authenticity_token, :only => [:approve_article, :publish, :bulk_approve_article, :bulk_publish_article, :ajax_search]
+  skip_before_action :verify_authenticity_token, :only => [:approve_article, :publish, :bulk_approve_article, :bulk_publish_article, :ajax_search, :export]
   include ArticlesConcern
 
   def index
@@ -146,9 +146,13 @@ class ArticlesController < ApplicationController
   end
 
   def publishable
+    @article = Article.new
+    category_id = params["category"]["category_id"] rescue nil
     search = params[:search]
     if search.present?
       @articles = current_user.articles.includes(:user, :category).where("approved_by IS NOT NULL  && published_at IS NULL && title LIKE ?", "%#{search}%")
+    elsif category_id.present?
+      @articles = current_user.articles.includes(:user, :category).where("approved_by IS NOT NULL  && published_at IS NULL && category_id = ?", category_id)
     else 
       @articles = current_user.articles.includes(:user, :category).where("approved_by IS NOT NULL  && published_at IS NULL")
     end
@@ -159,6 +163,29 @@ class ArticlesController < ApplicationController
       format.html do
         
       end
+    end
+  end
+
+  def export
+
+    respond_to do |format|
+      format.json do
+        begin
+          category_id = params["article"]["category_id"]
+          articles = current_user.articles.count
+          if articles > 0
+            Article.export_articles(category_id)
+            message = "Exported successfully"
+          else
+            puts " No article found"
+            message = "No article found...."
+          end
+        rescue Exception => e
+          message = e.message
+        end    
+        render json: {message: message}
+      end
+      format.js 
     end
   end
 

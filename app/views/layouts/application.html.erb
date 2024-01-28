@@ -7,6 +7,13 @@
     <%= csp_meta_tag %>
 
     <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+    <%= javascript_include_tag :jquery, :jquery_ujs %>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
     <%#= javascript_include_tag 'application' %>
     <%#= javascript_pack_tag 'application', 'data-turbolinks-track': 'reload' %>
 
@@ -14,17 +21,17 @@
   </head>
 
   <body>
-
-    <% if user_signed_in? %>
-      <% link = current_user.is_admin ? "Articles To Be Approved" : "Published Articles" %>
-      <%= link_to "Categories", categories_path %> | <%= link_to link, articles_path %> | <%= link_to "Approved articles to publish",to_publish_articles_path %> | <%= link_to "Logout", destroy_user_session_path, method: :delete %> | <%= current_user.name %>
-
-    <% else %>
-      <%= link_to "Login", new_user_session_path %>
-    <% end %>
-
-     <p class="notice"><%= notice %></p>
-    <p class="alert"><%= alert %></p>
-    <%= yield %>
+    <div class="container">
+      <% if user_signed_in? %>
+        <% link = current_user.is_admin ? "Articles To Be Approved" : "Published Articles" %>
+        <%= link_to "Categories", categories_path %> | <%= link_to link, articles_path %> | <%= link_to "Approved articles to publish",to_publish_articles_path %> | <%= link_to "Logout", destroy_user_session_path, method: :delete %> | <%= current_user.name %>
+      <% else %>
+        <%= link_to "Login", new_user_session_path %>
+      <% end %>
+      <p class="notice"><%= notice %></p>
+      <p class="alert"><%= alert %></p>
+      <%= yield %>
+    </div>
   </body>
 </html>
+

@@ -53,60 +53,108 @@
 	}
 	
 </script> -->
-<div>
-	<%= form_tag url_for(action: :publishable), method: :get, id: "search_publishable_articles" do %>
-		<div>
-			<span id = "search_error"></span> 
-		</div>
-		<div>
-			<b> <%= label_tag "Search:" %> </b> &nbsp;
-			<%= text_field_tag "search", nil, placeholder: "search by title" %> &nbsp;
-			<%= submit_tag "search" %>
-		</div>
-	<% end %>
-</div>
-<div id = "publish_button">
-	<button onclick="publishArticle()">publish</button>
-</div>
-
-
-<table border ="3">
-	<thead>
-		<tr>
-			<th> # </th>
-			<th> Sl.No </th>
-			<th> Title </th>
-			<th> Created By </th>
-			<th> Category </th> 
-			<!-- <th> Action </th> -->
-		<tr>
-	</thead>
-	<tbody id = "publishable_articles">
-		<% if @articles.present? %>
-			<% @articles.each_with_index do |article, index| %>
-				<tr>
-					<td> <input type="checkbox" class="publish" value= <%= article.id %> /></td>
-					<td> <%= index + 1 %> </td>
-					<td> <%= article.title %> </td>
-					<td> <%= article.user.name %> </td>
-			     	<td> <%= article.category.title %> </td>	
-				</tr>
-			<% end %>	
+<div class="row">
+	<div class="col-md-5">
+		<%= form_tag url_for(action: :publishable), method: :get, id: "filter_by_category" do %>
+			<div class = "row">
+				<div class = "col-md-10" id = "form_category_category_id">
+					<div class="form-group">
+						<%= collection_select(:category, :category_id, Category.all, :id, :title, {:prompt => 'Select Category'}, class: "form-control")%>
+					</div>
+				</div>
+				<div class = "col-sm-2">
+					<div class="form-group">
+						<%= submit_tag "Filter", class: "btn btn-primary" %>
+					</div>
+				</div>
+			</div>
 		<% end %>
-	</tbody>
-</table>
+	</div>
+	<div class="col-md-4">
+		<%= form_tag url_for(action: :publishable), method: :get, id: "search_publishable_articles" do %>
+			<div class = "row">
+				<div class = "col-sm-8">
+					<div class="form-group">
+						<span id = "search_error"></span>
+						<%= text_field_tag "search", nil, placeholder: "Search by title", class: "form-control"%> &nbsp;				
+					</div>
+				</div>
+				<div class="col-sm-2" id = "search_button">
+					<div class="form-group">
+						<%= submit_tag "search", class: "btn btn-primary" %>
+					</div>
+				</div>
+			</div>
+		<% end %>
+	</div>
+<div>
+
+<div class = "row">
+	<div class="col-md-3" id = "publish_button" >
+		<button onclick="publishArticle()" class="btn btn-success">Publish</button>
+	</div>
+	<div class = "col-md-8" id= "render_export_articles">
+		<%= link_to "Export", export_csv_articles_path, remote: true, class: "btn btn-info"%>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-lg-12 article_table">
+		<table class = "table table-bordered">
+			<thead class="thead-dark">
+				<tr>
+					<th> # </th>
+					<th> Sl.No </th>
+					<th> Title </th>
+					<th> Created By </th>
+					<th> Category </th> 
+					<!-- <th> Action </th> -->
+				<tr>
+			</thead>
+			<tbody id = "publishable_articles">
+				<% if @articles.present? %>
+					<% @articles.each_with_index do |article, index| %>
+						<tr>
+							<td> <input type="checkbox" class="publish" value= <%= article.id %> /></td>
+							<td> <%= index + 1 %> </td>
+							<td> <%= article.title %> </td>
+							<td> <%= article.user.name %> </td>
+					     	<td> <%= article.category.title %> </td>	
+						</tr>
+					<% end %>	
+				<% else %>
+					<tr>
+						<td colspan="5" style="text-align: center;"> <b>No Articles found.!!!</b> </td>
+					</tr>
+				<% end %>
+			</tbody>
+		</table>
+	</div>
+</div>
+
 <style>
 	table {
     border-collapse: separate;
     text-indent: initial;
     border-spacing: 2px;
-    width: 100%;
-}
+    min-width: 100%;
+	}
 
-#publish_button {
-	margin: 10px;
-	margin-left: 0px;
-}
+	.article_table{
+		width: 100%;
+	}
+
+	#form_category_category_id{
+		padding: 0px;
+		margin: 0px;
+
+	}
+
+	#search_button{
+		padding: 0px;
+		margin: 0px;
+
+	}
 </style>
 
 <script type="text/javascript">
