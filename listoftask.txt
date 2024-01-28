@@ -26,6 +26,7 @@ solution ===>
 12. ajax call using jquery and also in ruby on rails
 13. when params[:page] not present
 14. filter and export with category.
+15. background jobs.
 
 concepts to learn:
 1.  CSRF token authenticity.

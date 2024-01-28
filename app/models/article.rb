@@ -1,4 +1,5 @@
 require 'carrierwave/orm/activerecord'
+include ArticleConcern
 
 class Article < ApplicationRecord
 	validates_presence_of :category_id, :title, :content
