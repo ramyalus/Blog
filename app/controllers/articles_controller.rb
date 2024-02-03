@@ -167,7 +167,6 @@ class ArticlesController < ApplicationController
   end
 
   def export
-
     respond_to do |format|
       format.json do
         begin
@@ -175,7 +174,7 @@ class ArticlesController < ApplicationController
           articles = current_user.articles.count
           if articles > 0
             Article.export_articles(category_id)
-            message = "Exported successfully"
+            message = "Exported initiated successfully"
           else
             puts " No article found"
             message = "No article found...."
