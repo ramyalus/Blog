@@ -22,12 +22,33 @@
 
   <body>
     <div class="container">
-      <% if user_signed_in? %>
-        <% link = current_user.is_admin ? "Articles To Be Approved" : "Published Articles" %>
-        <%= link_to "Categories", categories_path %> | <%= link_to link, articles_path %> | <%= link_to "Approved articles to publish",to_publish_articles_path %> | <%= link_to "Logout", destroy_user_session_path, method: :delete %> | <%= current_user.name %>
-      <% else %>
-        <%= link_to "Login", new_user_session_path %>
-      <% end %>
+      <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+        
+          <ul class="navbar-nav">
+            <% if user_signed_in? %>
+              <li class="nav-item">
+                <% link = current_user.is_admin ? "Articles To Be Approved" : "Published Articles" %>
+                 <%= link_to link, articles_path, class: "nav-link" %> 
+              </li>
+              <li class="nav-item">
+                <%= link_to "Categories", categories_path, class: "nav-link" %> 
+              </li>
+              <li class="nav-item">
+                <%= link_to "Approved articles to publish",to_publish_articles_path, class: "nav-link" %>
+              </li>
+              <li class="nav-item">
+                <%= link_to "Logout", destroy_user_session_path, method: :delete, class: "nav-link" %> 
+              </li>
+              <li class="nav-item nav-link" >
+                <%= current_user.name %>
+              </li>
+            <% else %>
+              <li class="nav-item">
+                <%= link_to "Login", new_user_session_path, class: "nav-link" %>
+              </li>
+            <% end %>
+          </ul>
+      </nav>
       <p class="notice"><%= notice %></p>
       <p class="alert"><%= alert %></p>
       <%= yield %>

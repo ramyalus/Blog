@@ -1,7 +1,4 @@
 
-<%= link_to "Add Article", new_article_path %><br/><br/>
-
-
 
 <!--  approve single article using ajax 
 
@@ -65,26 +62,31 @@
 
 <div id = 'approveable_articles'>
 </div>
-<div>
-	<div>
-		<%= form_tag url_for(action: "index"), method: "get", id: "search_article" do  %>
-			<b> <%= label_tag "Search:" %> </b> &nbsp;
-			<%= text_field_tag "search", nil, placeholder: "search by title" %> &nbsp;
-			<%= submit_tag "Search" %> 
-		<% end %> 
+<div class="row">
+	<div class="col-md-2">
+		<%= link_to "Add Article", new_article_path, class: 'btn btn-primary' %>
 	</div>
-	<span id = "article_count">
-		<b>Total Number of Articles:</b> <%= @articles.length %>
-	</span>
-	<div id  = "approve_button">
+	<div id  = "approve_button" class="col-md-3">
 		<% if current_user.is_admin %>
-			<button onclick="approveArticle()">Approve</button>
+			<button onclick="approveArticle()" class="btn btn-primary">Approve</button>
 		<% end %>
 	</div>
+	<div class="d-flex flex-row-reverse col-md-5">
+		<%= form_tag url_for(action: "index"), method: "get", id: "search_article", class: "form-inline" do  %>
+			<%= text_field_tag "search", nil, placeholder: "Search by title", class: "form-control mb-3 mr-sm-3" %> 	
+			<%= submit_tag "Search", class: "btn btn-success mb-3" %> 
+		<% end %> 
+	</div>   
 </div>
+<div class="d-flex justify-content-end">
+	<div id = "article_count">
+		<b>Total Number of Articles:</b> <%= @articles.length %>
+	</div>
+</div>
+	
 
-<table border = "3">
-	<thead>
+<table class="table table-stripped">
+	<thead class="thead-dark">
 		<tr>
 		<th>SL No.</th>
 		<th>Title </th> 
@@ -140,10 +142,9 @@
     width: 100%;
 }
 
-#approve_button {
-	margin: 10px;
-	margin-left: 0px;
-}
+	#article_count {
+		margin: 10px;
+	}
 </style>
 
 <script type="text/javascript">

@@ -23,3 +23,9 @@
 8. To create new branch:
 	=> git checkout -b " branch-name" (it will create branch and automatically checkoout to the branch.)
 	=> git branch "branch-name" (it just creates branch.)
+
+9. To get latest code: 
+	=> git pull origin "branch-name"
+
+10. To merge one branch to another:
+	=> git merge "branch-name"
