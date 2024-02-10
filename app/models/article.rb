@@ -5,7 +5,7 @@ class Article < ApplicationRecord
 	validates_presence_of :category_id, :title, :content
 	belongs_to :category
 	belongs_to :user
-
+  
 	#Followed this docs - https://code.tutsplus.com/uploading-with-rails-and-carrierwave--cms-28409a
 	mount_uploader :image_url, AvatarUploader
 
